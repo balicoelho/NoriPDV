@@ -5,7 +5,7 @@ const validaLogin = require('./intermediarios/validaLogin');
 
 const rotas = express();
 
-// rotas.get('/categoria', categoria.listarCategoria);
+rotas.get('/categoria', categoria.listarCategoria);
 
 rotas.post('/usuario', usuario.cadastrarUsuario);
 
