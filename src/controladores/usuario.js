@@ -1,6 +1,7 @@
 const jwt = require('jsonwebtoken');
 const bcrypt = require('bcrypt');
 const knex = require('../database')
+const key = require('../key');
 
 const cadastrarUsuario = async (req, res) => {
 	const { nome, email, senha } = req.body
@@ -26,6 +27,36 @@ const cadastrarUsuario = async (req, res) => {
 	}
 }
 
+const efetuarLogin = async (req, res) => {
+    const { email, senha } = req.body;
+
+    try {
+
+        const usuario = await knex("usuarios").where({email})
+
+        if (usuario.rowCount < 1) {
+            return res.status(404).json({ mensagem: "Usuário e/ou senha inválido(s)." });
+        }
+    
+        const senhaValida = await bcrypt.compare(senha, usuario[0].senha);
+
+        if (!senhaValida) {
+            return res.status(404).json({ mensagem: "Usuário e/ou senha inválido(s)." });
+        }
+
+        const token = jwt.sign({ id: usuario[0].id }, key, { expiresIn: '10h' });
+
+        const { senha: _, ...usuarioLogado } = usuario[0];
+
+        return res.json({ usuario: usuarioLogado, token });
+
+    } catch (error) {
+        console.log(error)
+        return res.status(500).json({ mensagem: `Erro interno do servidor. ${error.message}` });
+    }
+}
+
+
 module.exports = {
-	cadastrarUsuario
+	cadastrarUsuario, efetuarLogin
 }
