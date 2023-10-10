@@ -13,7 +13,7 @@ const cadastrarUsuario = async (req, res) => {
 			nome,
 			email,
 			senha: senhaCriptografada
-		}).returning('*')
+		}).returning(['id', 'nome', 'email'])
 
         if (novoUsuario && novoUsuario.length > 0) {
 			return res.status(201).json(novoUsuario);
