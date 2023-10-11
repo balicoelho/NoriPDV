@@ -11,9 +11,9 @@ rotas.post('/usuario', usuario.cadastrarUsuario);
 
 rotas.post('/login', usuario.efetuarLogin);
 
-// rotas.use(validaLogin);
+rotas.use(validaLogin);
 
-// rotas.get('/usuario', usuario.obterPerfil);
+rotas.get('/usuario', usuario.obterPerfil);
 
 // rotas.put('/usuario', usuario.atualizarPerfil);
 
