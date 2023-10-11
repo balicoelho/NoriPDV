@@ -56,7 +56,14 @@ const efetuarLogin = async (req, res) => {
     }
 }
 
+const obterPerfil = async (req, res) => {
+    try {
+        return res.json(req.usuario);
+    } catch (error) {
+        res.status(401).json({ "mensagem": "Para acessar este recurso um token de autenticação válido deve ser enviado." })
+    }
+}
 
 module.exports = {
-	cadastrarUsuario, efetuarLogin
+	cadastrarUsuario, efetuarLogin, obterPerfil
 }
