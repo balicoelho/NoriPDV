@@ -1,6 +1,4 @@
-const express = require('express')
 const knex = require('../database')
-
 
 const listarCategoria = async (req, res) => {
 
@@ -13,6 +11,6 @@ const listarCategoria = async (req, res) => {
       }
     };
     
-    module.exports = {
-         listarCategoria
-    }
+module.exports = {
+  listarCategoria
+}
