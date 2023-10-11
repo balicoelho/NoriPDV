@@ -2,7 +2,7 @@ const key = require('../key');
 const jwt = require('jsonwebtoken');
 const knex = require('../database')
 
-const validaLogin = async (req, res, next) => {
+const validaToken = async (req, res, next) => {
     try {
         const token = req.headers.authorization.split(' ')[1];
 
@@ -29,4 +29,4 @@ const validaLogin = async (req, res, next) => {
     }
 }
 
-module.exports = validaLogin;
+module.exports = validaToken;
