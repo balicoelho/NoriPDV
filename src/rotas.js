@@ -17,7 +17,7 @@ rotas.use(validaToken);
 
 rotas.get('/usuario', usuario.obterPerfil);
 
-// rotas.put('/usuario', usuario.atualizarPerfil);
+rotas.put('/usuario', usuario.atualizarPerfil);
 
 module.exports = rotas;
 

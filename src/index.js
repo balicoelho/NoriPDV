@@ -9,4 +9,4 @@ app.use(express.json());
 app.use(cors());
 app.use(rotas);
 
-app.listen(process.env.PORT, () => console.log("Servidor iniciado"));
+app.listen(process.env.PORT, () => console.log(`🚀 Servidor está em execução...`));
