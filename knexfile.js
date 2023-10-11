@@ -1,7 +1,7 @@
 require("dotenv").config();
 
 module.exports = {
-  production: {
+  development: {
     client: "pg",
     connection: {
       host: process.env.DB_HOST,
