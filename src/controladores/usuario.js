@@ -77,44 +77,59 @@ const obterPerfil = async (req, res) => {
   }
 };
 
-const atualizarPerfil = async (req, res) =>{
+const atualizarPerfil = async (req, res) => {
   const { nome, email, senha } = req.body;
 
   try {
-    if(!nome&&!email&&!senha){
-      return res.status(400).json({ mensagem: `Para atualizar o perfil do usuário é necessário que pelo menos um campo seja fornecido.`});
+    if (!nome && !email && !senha) {
+      return res.status(400).json({
+        mensagem: `Para atualizar o perfil do usuário é necessário que pelo menos um campo seja fornecido.`,
+      });
     }
 
-    const usuarioAtualizado={};
+    const usuarioAtualizado = {};
 
-    if(nome){
-      usuarioAtualizado.nome=nome;
+    if (nome) {
+      usuarioAtualizado.nome = nome;
     }
 
-    if(email){
-      const emailExiste = await knex('usuarios').where({email}).select('*').first();
-      
-      if(emailExiste&&emailExiste.id!=req.usuario.id){
-        return res.status(400).json({ mensagem: `Já existe um usuário cadastrado com este email.`});
+    if (email) {
+      const emailExiste = await knex("usuarios")
+        .where({ email })
+        .select("*")
+        .first();
+
+      if (emailExiste && emailExiste.id != req.usuario.id) {
+        return res.status(400).json({
+          mensagem: `Já existe um usuário cadastrado com este email.`,
+        });
       }
-      usuarioAtualizado.email=email;
+      usuarioAtualizado.email = email;
     }
 
-    if(senha){
+    if (senha) {
       const senhaCriptografada = await bcrypt.hash(senha, 10);
       usuarioAtualizado.senha = senhaCriptografada;
     }
 
-    const atualizarUsuario = await knex('usuarios').where({id:req.usuario.id}).update(usuarioAtualizado).returning('*');
-  
-    if(!atualizarUsuario){
-      return res.status(500).json({mensagem:`Erro interno do servidor: Não foi possível atualizar usuário!`});
+    const atualizarUsuario = await knex("usuarios")
+      .where({ id: req.usuario.id })
+      .update(usuarioAtualizado)
+      .returning("*");
+
+    if (!atualizarUsuario) {
+      return res.status(500).json({
+        mensagem: `Erro interno do servidor: Não foi possível atualizar usuário!`,
+      });
     }
 
-    return res.status(200).json({mensagem:`Usuário atualizado com sucesso!`});
-
+    return res
+      .status(200)
+      .json({ mensagem: `Usuário atualizado com sucesso!` });
   } catch (error) {
-    return res.status(500).json({ mensagem: `Erro interno do servidor: ${error.message}`});
+    return res
+      .status(500)
+      .json({ mensagem: `Erro interno do servidor: ${error.message}` });
   }
 };
 
@@ -122,5 +137,5 @@ module.exports = {
   cadastrarUsuario,
   efetuarLogin,
   obterPerfil,
-  atualizarPerfil
+  atualizarPerfil,
 };

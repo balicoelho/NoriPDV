@@ -33,7 +33,18 @@ const schemaLogin = joi.object({
   }),
 });
 
+const schemaAtualizarUsuario = joi.object({
+  email: joi.string().email().messages({
+    "string.email": "O campo email precisa ter um formato válido",
+  }),
+
+  senha: joi.string().min(6).messages({
+    "string.min": "A senha precisa conter, no mínimo, 6 caracteres",
+  }),
+});
+
 module.exports = {
   schemaCadastrarUsuario,
   schemaLogin,
+  schemaAtualizarUsuario,
 };

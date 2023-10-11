@@ -13,10 +13,10 @@ Este projeto baseia-se na criação de uma API RESTful para um PDV (frente de ca
 ## Rotas e funcionalidades da API
 
 - `GET /categoria`: Lista as categorias disponíveis no banco de dados.
-- `POST /usuario`:  Cadastra novo usuário no sistema, de acordo com os campos: nome, email e senha.
+- `POST /usuario`: Cadastra novo usuário no sistema, de acordo com os campos: nome, email e senha.
 - `POST /login`: Realiza login do usuário cadastrado.
 - `GET /usuario`: Permite que o usúario logado visualize seu próprio perfil.
-- `PUT /usuario`: Permite que o usúario atualize suas informações de cadastro. 
+- `PUT /usuario`: Permite que o usúario atualize suas informações de cadastro.
 
 ## Para executar:
 
