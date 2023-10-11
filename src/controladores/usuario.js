@@ -6,6 +6,14 @@ const cadastrarUsuario = async (req, res) => {
   const { nome, email, senha } = req.body;
 
   try {
+    const emailExiste = await knex("usuarios").where({ email }).first();
+
+    if (emailExiste) {
+      return res.status(400).json({
+        mensagem: "Já existe usuário cadastrado com o e-mail informado.",
+      });
+    }
+
     const senhaCriptografada = await bcrypt.hash(senha, 10);
 
     const novoUsuario = await knex("usuarios")
@@ -16,17 +24,11 @@ const cadastrarUsuario = async (req, res) => {
       })
       .returning(["id", "nome", "email"]);
 
-      const emailExiste = await knex("usuarios").where({email}).first()
-
-        if (emailExiste) {
-            return res.status(400).json({ mensagem: 'Já existe usuário cadastrado com o e-mail informado.' });
-        }
-
-    if (novoUsuario && novoUsuario.length > 0) {
-      return res.status(201).json(novoUsuario);
-    } else {
+    if (novoUsuario[0] === undefined) {
       return res.status(400).json({ mensagem: "Erro ao cadastrar o usuário" });
     }
+
+    return res.status(201).json(novoUsuario);
   } catch (error) {
     return res.status(400).json(error.message);
   }
@@ -40,7 +42,7 @@ const efetuarLogin = async (req, res) => {
 
     if (!usuario) {
       return res
-        .status(404)
+        .status(401)
         .json({ mensagem: "Usuário e/ou senha inválido(s)." });
     }
 
@@ -48,7 +50,7 @@ const efetuarLogin = async (req, res) => {
 
     if (!senhaValida) {
       return res
-        .status(404)
+        .status(401)
         .json({ mensagem: "Usuário e/ou senha inválido(s)." });
     }
 
