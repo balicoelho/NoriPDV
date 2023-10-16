@@ -81,10 +81,7 @@ const atualizarPerfil = async (req, res) => {
     }
 
     if (email) {
-      const emailExiste = await knex("usuarios")
-        .where({ email })
-        .select("*")
-        .first();
+      const emailExiste = await knex("usuarios").where({ email }).first();
 
       if (emailExiste && emailExiste.id != req.usuario.id) {
         return res.status(400).json({
@@ -105,8 +102,8 @@ const atualizarPerfil = async (req, res) => {
       .returning("*");
 
     if (!atualizarUsuario) {
-      return res.status(500).json({
-        mensagem: `Erro interno do servidor: Não foi possível atualizar usuário!`,
+      return res.status(400).json({
+        mensagem: "Erro ao atualizar o usuário",
       });
     }
 
@@ -114,9 +111,7 @@ const atualizarPerfil = async (req, res) => {
       .status(200)
       .json({ mensagem: `Usuário atualizado com sucesso!` });
   } catch (error) {
-    return res
-      .status(500)
-      .json({ mensagem: `Erro interno do servidor: ${error.message}` });
+    return res.status(500).json({ mensagem: error.message });
   }
 };
 

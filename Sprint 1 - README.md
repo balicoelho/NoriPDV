@@ -4,8 +4,7 @@ Este projeto baseia-se na criação de uma API RESTful para um PDV (frente de ca
 
 <div align='center'>
 <br>
-(aqui vai a primeira screenshot)
-(aqui vai a segunda screenshot)
+(Colar print)
 <br>
 
 </div>
