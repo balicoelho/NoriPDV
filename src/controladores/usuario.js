@@ -30,7 +30,7 @@ const cadastrarUsuario = async (req, res) => {
 
     return res.status(201).json(novoUsuario);
   } catch (error) {
-    return res.status(400).json(error.message);
+    return res.status(500).json({ message: error.message });
   }
 };
 
@@ -60,13 +60,13 @@ const efetuarLogin = async (req, res) => {
 
     const { senha: _, ...usuarioLogado } = usuario;
 
-    return res.json({ usuario: usuarioLogado, token });
+    return res.status(200).json({ usuario: usuarioLogado, token });
   } catch (error) {
     return res.status(500).json({ mensagem: error.message });
   }
 };
 
-const obterPerfil = async (req, res) => {
+const obterPerfil = (req, res) => {
   return res.status(200).json(req.usuario);
 };
 
@@ -74,12 +74,6 @@ const atualizarPerfil = async (req, res) => {
   const { nome, email, senha } = req.body;
 
   try {
-    if (!nome && !email && !senha) {
-      return res.status(400).json({
-        mensagem: `Para atualizar o perfil do usuário é necessário que pelo menos um campo seja fornecido.`,
-      });
-    }
-
     const usuarioAtualizado = {};
 
     if (nome) {

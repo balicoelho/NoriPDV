@@ -34,20 +34,26 @@ const schemaLogin = joi.object({
   }),
 });
 
-const schemaAtualizarUsuario = joi.object({
-  nome: joi.string().messages({
-    "string.base": "O campo nome precisa ser em formato texto",
-    "string.empty": "O campo nome não pode ser vazio",
-  }),
+const schemaAtualizarUsuario = joi
+  .object({
+    nome: joi.string().messages({
+      "string.base": "O campo nome precisa ser em formato texto",
+      "string.empty": "O campo nome não pode ser vazio",
+    }),
 
-  email: joi.string().email().messages({
-    "string.email": "O campo email precisa ter um formato válido",
-  }),
+    email: joi.string().email().messages({
+      "string.email": "O campo email precisa ter um formato válido",
+    }),
 
-  senha: joi.string().min(6).messages({
-    "string.min": "A senha precisa conter, no mínimo, 6 caracteres",
-  }),
-});
+    senha: joi.string().min(6).messages({
+      "string.min": "A senha precisa conter, no mínimo, 6 caracteres",
+    }),
+  })
+  .or("nome", "email", "senha")
+  .messages({
+    "object.missing":
+      "Pelo menos um dos campos (nome, email ou senha) é obrigatório.",
+  });
 
 module.exports = {
   schemaCadastrarUsuario,
