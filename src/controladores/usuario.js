@@ -67,14 +67,7 @@ const efetuarLogin = async (req, res) => {
 };
 
 const obterPerfil = async (req, res) => {
-  try {
-    return res.json(req.usuario);
-  } catch (error) {
-    res.status(401).json({
-      mensagem:
-        "Para acessar este recurso um token de autenticação válido deve ser enviado.",
-    });
-  }
+  return res.status(200).json(req.usuario);
 };
 
 const atualizarPerfil = async (req, res) => {

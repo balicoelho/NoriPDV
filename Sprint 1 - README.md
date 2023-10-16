@@ -24,4 +24,4 @@ Este projeto baseia-se na criação de uma API RESTful para um PDV (frente de ca
 2. Navegue até o diretório do projeto: `cd NoriPDV`
 3. Instale as dependências: `npm install`
 4. Inicie o servidor: `npm run dev`
-5. A API estará disponível em: `http://localhost:3000` por padrão.
+5. A API estará disponível em: `nutty-twill-toad.cyclic.app`.

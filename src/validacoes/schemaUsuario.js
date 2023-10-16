@@ -2,6 +2,7 @@ const joi = require("joi");
 
 const schemaCadastrarUsuario = joi.object({
   nome: joi.string().required().messages({
+    "string.base": "O campo nome precisa ser em formato texto",
     "any.required": "O campo nome é obrigatório",
     "string.empty": "O campo nome não pode ser vazio",
   }),
@@ -34,6 +35,11 @@ const schemaLogin = joi.object({
 });
 
 const schemaAtualizarUsuario = joi.object({
+  nome: joi.string().messages({
+    "string.base": "O campo nome precisa ser em formato texto",
+    "string.empty": "O campo nome não pode ser vazio",
+  }),
+
   email: joi.string().email().messages({
     "string.email": "O campo email precisa ter um formato válido",
   }),
