@@ -1,7 +1,13 @@
 const knex = require('../database');
+const {retirarCaracteresEspeciais} = require('../utils/formatacao')
 
 const cadastrarCliente = async (req, res) => {
     const { nome, email, cpf, cep, rua, numero, bairro, cidade, estado } = req.body;
+
+    const cpfFormatado = retirarCaracteresEspeciais(cpf);
+    const cepFormatado=retirarCaracteresEspeciais(cep);
+
+
     try {
         const emailExistente = await knex("clientes").where({ email }).first();
 
@@ -11,7 +17,7 @@ const cadastrarCliente = async (req, res) => {
             });
         }
         
-        const cpfExistente = await knex("clientes").where({ cpf }).first();
+        const cpfExistente = await knex("clientes").where({ cpf:cpfFormatado }).first();
 
         if (cpfExistente) {
             return res.status(400).json({
@@ -22,8 +28,8 @@ const cadastrarCliente = async (req, res) => {
         const novoCliente = await knex("clientes").insert({
             nome,
             email,
-            cpf,
-            cep,
+            cpf:cpfFormatado,
+            cep:cepFormatado,
             rua,
             numero,
             bairro,
@@ -41,6 +47,73 @@ const cadastrarCliente = async (req, res) => {
     }
 }
 
+const editarCliente = async (req, res) => {
+    const { nome, email, cpf, cep, rua, numero, bairro, cidade, estado } = req.body;
+    const {id} = req.params;
+
+    const cpfFormatado = retirarCaracteresEspeciais(cpf);
+    
+    try {
+
+        const clienteEncontrado = await knex('clientes').where({ id }).first();
+        if (!clienteEncontrado){
+            return res.status(404).json({ message: "Cliente não encontrado" });
+        }
+
+        const emailEncontrado = await knex('clientes').where({ email }).first();
+
+        if (emailEncontrado && emailEncontrado.id!=id) {
+            return res.status(400).json({
+                mensagem: "Já existe usuário cadastrado com o e-mail informado."
+            });
+        }
+        
+        const cpfEncontrado = await knex('clientes').where({cpf: cpfFormatado}).first();
+
+        if (cpfEncontrado&&cpfEncontrado.id!=id) {
+            return res.status(400).json({
+                mensagem: "Já existe usuário cadastrado com o cpf informado."
+            });
+        }
+
+        const clienteAtualizado = {nome, email, cpf:cpfFormatado};
+
+        if(cep){
+            const cepFormatado=retirarCaracteresEspeciais(cep);
+            clienteAtualizado.cep = cepFormatado;
+        }
+
+        if(rua){
+            clienteAtualizado.rua = rua;
+        }
+        
+        if(numero){
+            clienteAtualizado.numero = numero;
+        }
+
+        if(bairro){
+            clienteAtualizado.bairro = bairro;
+        }
+
+        if(cidade){
+            clienteAtualizado.cidade = cidade;
+        }
+
+        if(estado){
+            clienteAtualizado.estado = estado;
+        }
+        
+        const retorno = await knex('clientes').where({id}).update(clienteAtualizado).returning('*');
+
+        return res.status(200).json({"Cliente atualizado":retorno[0]});
+
+
+    } catch (error) {
+        return res.status(400).json(error.message)
+    }
+}
+
 module.exports = {
-    cadastrarCliente
+    cadastrarCliente,
+    editarCliente
 }
