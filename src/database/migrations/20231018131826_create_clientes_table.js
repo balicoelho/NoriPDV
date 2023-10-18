@@ -1,5 +1,5 @@
 
-exports.up = function(knex) {
+exports.up = function (knex) {
     return knex.schema.createTable("clientes", function (table) {
         table.increments("id");
         table.string("nome", 255).notNullable();
@@ -8,14 +8,14 @@ exports.up = function(knex) {
         table.string('cep', 10);
         table.string('rua', 100);
         table.string('numero', 100);
-        table.string('bairro',100);
+        table.string('bairro', 100);
         table.string('cidade', 100);
         table.string('estado', 2);
 
-      });
+    });
 };
 
 
-exports.down = function(knex) {
+exports.down = function (knex) {
     return knex.schema.dropTable("clientes");
 };

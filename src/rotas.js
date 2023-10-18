@@ -8,6 +8,8 @@ const {
   schemaLogin,
   schemaAtualizarUsuario,
 } = require("./validacoes/schemaUsuario");
+const { cadastrarCliente } = require("./controladores/clientes");
+const { schemaCadastrarCliente } = require("./validacoes/schemaCliente");
 
 const rotas = express();
 
@@ -30,5 +32,7 @@ rotas.put(
   validacoes(schemaAtualizarUsuario),
   usuario.atualizarPerfil
 );
+
+rotas.post("/cliente", validacoes(schemaCadastrarCliente), cadastrarCliente)
 
 module.exports = rotas;
