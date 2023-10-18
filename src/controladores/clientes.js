@@ -109,7 +109,7 @@ const editarCliente = async (req, res) => {
 
 
     } catch (error) {
-        return res.status(400).json(error.message)
+        return res.status(400).json({"Erro interno do servidor":error.message});
     }
 }
 
