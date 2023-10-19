@@ -5,8 +5,7 @@ const cadastrarCliente = async (req, res) => {
     const { nome, email, cpf, cep, rua, numero, bairro, cidade, estado } = req.body;
 
     const cpfFormatado = retirarCaracteresEspeciais(cpf);
-    const cepFormatado=retirarCaracteresEspeciais(cep);
-
+    const cepFormatado = retirarCaracteresEspeciais(cep);
 
     try {
         const emailExistente = await knex("clientes").where({ email }).first();
@@ -43,7 +42,7 @@ const cadastrarCliente = async (req, res) => {
 
         return res.status(201).json(novoCliente)
     } catch (error) {
-        return res.status(500).json(error.message)
+        return res.status(500).json({ mensagem: error.message })
     }
 };
 
@@ -67,7 +66,7 @@ const detalharCliente = async (req,res) =>{
       }
       return res.status(200).json(cliente);
     } catch (error) {
-      return res.status(500).json(error.message);
+      return res.status(500).json({ mensagem: error.message });
     }
 };
 
@@ -87,7 +86,7 @@ const editarCliente = async (req, res) => {
 
         const emailEncontrado = await knex('clientes').where({ email }).first();
 
-        if (emailEncontrado && emailEncontrado.id!=id) {
+        if (emailEncontrado && emailEncontrado.id != id) {
             return res.status(400).json({
                 mensagem: "Já existe usuário cadastrado com o e-mail informado."
             });
@@ -95,7 +94,7 @@ const editarCliente = async (req, res) => {
         
         const cpfEncontrado = await knex('clientes').where({cpf: cpfFormatado}).first();
 
-        if (cpfEncontrado&&cpfEncontrado.id!=id) {
+        if (cpfEncontrado && cpfEncontrado.id != id) {
             return res.status(400).json({
                 mensagem: "Já existe usuário cadastrado com o cpf informado."
             });
@@ -104,7 +103,7 @@ const editarCliente = async (req, res) => {
         const clienteAtualizado = {nome, email, cpf:cpfFormatado};
 
         if(cep){
-            const cepFormatado=retirarCaracteresEspeciais(cep);
+            const cepFormatado = retirarCaracteresEspeciais(cep);
             clienteAtualizado.cep = cepFormatado;
         }
 
@@ -134,7 +133,7 @@ const editarCliente = async (req, res) => {
 
 
     } catch (error) {
-        return res.status(400).json({"Erro interno do servidor":error.message});
+        return res.status(500).json({ mensagem: error.message });
     }
 }
 
