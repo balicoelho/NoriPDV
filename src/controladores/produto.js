@@ -1,12 +1,12 @@
 const knex = require("../database");
 
 const cadastrarProduto = async (req, res) => {
-  const { descricao, quantidade_estoque, valor, categorias_id } = req.body;
+  const { descricao, quantidade_estoque, valor, categoria_id } = req.body;
 
   try {
     const categoriaExiste = await knex("categorias")
       .where({
-        id: categorias_id,
+        id: categoria_id,
       })
       .first();
 
@@ -18,7 +18,7 @@ const cadastrarProduto = async (req, res) => {
         descricao,
         quantidade_estoque,
         valor,
-        categorias_id,
+        categoria_id,
       })
       .returning("*");
 
@@ -29,7 +29,7 @@ const cadastrarProduto = async (req, res) => {
 };
 
 const editarProduto = async (req, res) => {
-  const { descricao, quantidade_estoque, valor, categorias_id } = req.body;
+  const { descricao, quantidade_estoque, valor, categoria_id } = req.body;
   const { id } = req.params;
   try {
     const produto = await knex("produtos").where({ id }).first();
@@ -39,7 +39,7 @@ const editarProduto = async (req, res) => {
 
     const categoriaExiste = await knex("categorias")
       .where({
-        id: categorias_id,
+        id: categoria_id,
       })
       .first();
 
@@ -52,7 +52,7 @@ const editarProduto = async (req, res) => {
         descricao,
         quantidade_estoque,
         valor,
-        categorias_id,
+        categoria_id,
       })
       .where({ id })
       .returning("*");
@@ -70,15 +70,15 @@ const listarProdutos = async (req, res) => {
     const produtos = await knex("produtos").where((query) => {
       if (categoria_id && categoria_id.length > 1) {
         categoria_id.forEach((item) => {
-          query.orWhere({ categorias_id: item });
+          query.orWhere({ categoria_id: item });
         });
       }
       if (categoria_id && categoria_id.length === 1) {
-        query.orWhere({ categorias_id: categoria_id });
+        query.orWhere({ categoria_id: categoria_id });
       }
     });
 
-    return res.status(201).json(produtos);
+    return res.status(200).json(produtos);
   } catch (error) {
     return res.status(500).json(error.message);
   }
@@ -91,7 +91,7 @@ const detalharProduto = async (req, res) => {
     if (!produto) {
       return res.status(404).json({ message: "Produto não encontrado" });
     }
-    return res.status(201).json(produto);
+    return res.status(200).json(produto);
   } catch (error) {
     return res.status(500).json(error.message);
   }
