@@ -5,7 +5,7 @@ const cadastrarCliente = async (req, res) => {
     const { nome, email, cpf, cep, rua, numero, bairro, cidade, estado } = req.body;
 
     const cpfFormatado = retirarCaracteresEspeciais(cpf);
-    const cepFormatado = retirarCaracteresEspeciais(cep);
+    let cepFormatado = cep ? retirarCaracteresEspeciais(cep) : null;
 
     try {
         const emailExistente = await knex("clientes").where({ email }).first();

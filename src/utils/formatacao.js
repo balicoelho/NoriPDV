@@ -1,9 +1,9 @@
-const retirarCaracteresEspeciais = (entrada)=>{
+const retirarCaracteresEspeciais = (entrada) => {
     
     const digitos = [];
 
-    for(digito of entrada){
-        if(digito>=0&&digito<=9){
+    for (const digito of entrada) {
+        if (!isNaN(digito)) {
             digitos.push(digito);
         }
     }
@@ -14,3 +14,4 @@ const retirarCaracteresEspeciais = (entrada)=>{
 module.exports = {
     retirarCaracteresEspeciais
 }
+
