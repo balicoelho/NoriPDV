@@ -39,8 +39,35 @@ const cadastrarCliente = async (req, res) => {
     } catch (error) {
         return res.status(400).json(error.message)
     }
+};
+const listarCliente = async (req,res) =>{
+    
+    try {
+        const rows = await knex(`clientes`);
+        return res.json(rows);
+      } catch (error) {
+        return res.status(500).json({ mensagem: error.message });
+      }
+};
+
+const detalharCliente = async (req,res) =>{
+
+    const { id } = req.params;
+    try {
+      const cliente = await knex("clientes").where({ id }).first();
+      if (!cliente) {
+        return res.status(404).json({ message: "Cliente não encontrado" });
+      }
+      return res.status(201).json(cliente);
+    } catch (error) {
+      return res.status(500).json(error.message);
+    }
+
 }
 
+
 module.exports = {
-    cadastrarCliente
+    cadastrarCliente,
+    listarCliente,
+    detalharCliente
 }
