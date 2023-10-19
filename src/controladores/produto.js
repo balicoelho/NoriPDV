@@ -78,7 +78,7 @@ const listarProdutos = async (req, res) => {
       }
     });
 
-    return res.status(201).json(produtos);
+    return res.status(200).json(produtos);
   } catch (error) {
     return res.status(500).json(error.message);
   }
@@ -91,7 +91,7 @@ const detalharProduto = async (req, res) => {
     if (!produto) {
       return res.status(404).json({ message: "Produto não encontrado" });
     }
-    return res.status(201).json(produto);
+    return res.status(200).json(produto);
   } catch (error) {
     return res.status(500).json(error.message);
   }
