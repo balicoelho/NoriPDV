@@ -8,7 +8,7 @@ const {
   schemaLogin,
   schemaAtualizarUsuario,
 } = require("./validacoes/schemaUsuario");
-const { cadastrarCliente, listarCliente, detalharCliente } = require("./controladores/clientes");
+const { cadastrarCliente, listarCliente, detalharCliente, editarCliente } = require("./controladores/clientes");
 const { schemaCadastrarCliente } = require("./validacoes/schemaCliente");
 const { schemaCadastrarProduto } = require("./validacoes/schemaProduto");
 const {
@@ -35,11 +35,15 @@ rotas.put(
   "/usuario", validacoes(schemaAtualizarUsuario), usuario.atualizarPerfil
 );
 
-rotas.post("/cliente", validacoes(schemaCadastrarCliente), cadastrarCliente)
+rotas.post("/cliente", validacoes(schemaCadastrarCliente), cadastrarCliente);
+rotas.put("/cliente/:id", validacoes(schemaCadastrarCliente), editarCliente);
+
+
 rotas.post("/produto", validacoes(schemaCadastrarProduto), cadastrarProduto);
 rotas.put("/produto/:id", validacoes(schemaCadastrarProduto), editarProduto);
 rotas.get("/produto", listarProdutos);
 rotas.get("/produto/:id", detalharProduto);
+
 rotas.get("/cliente", listarCliente);
 rotas.get("/cliente/:id", detalharCliente);
 module.exports = rotas;
