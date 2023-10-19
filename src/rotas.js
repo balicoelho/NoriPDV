@@ -16,6 +16,7 @@ const {
   editarProduto,
   detalharProduto,
   listarProdutos,
+  excluirProduto
 } = require("./controladores/produto");
 
 const rotas = express();
@@ -43,6 +44,7 @@ rotas.post("/produto", validacoes(schemaCadastrarProduto), cadastrarProduto);
 rotas.put("/produto/:id", validacoes(schemaCadastrarProduto), editarProduto);
 rotas.get("/produto", listarProdutos);
 rotas.get("/produto/:id", detalharProduto);
+rotas.delete("/produto/:id", excluirProduto);
 
 rotas.get("/cliente", listarCliente);
 rotas.get("/cliente/:id", detalharCliente);
