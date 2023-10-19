@@ -11,8 +11,7 @@ const {
 const { cadastrarCliente, listarCliente, detalharCliente, editarCliente } = require("./controladores/clientes");
 const { schemaCadastrarCliente } = require("./validacoes/schemaCliente");
 const { schemaCadastrarProduto } = require("./validacoes/schemaProduto");
-const {
-  cadastrarProduto,
+const {cadastrarProduto,
   editarProduto,
   detalharProduto,
   listarProdutos,
@@ -48,4 +47,5 @@ rotas.delete("/produto/:id", excluirProduto);
 
 rotas.get("/cliente", listarCliente);
 rotas.get("/cliente/:id", detalharCliente);
+
 module.exports = rotas;

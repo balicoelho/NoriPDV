@@ -16,12 +16,13 @@ const schemaCadastrarCliente = joi.object({
         "string.base": "O campo cpf precisa ser em formato texto",
         "any.required": "O campo cpf é obrigatório",
         "string.empty": "O campo cpf não pode ser vazio",
-        "string.min": "A cpf precisa conter, no mínimo, 11 caracteres"
+        "string.min": "O cpf precisa conter, no mínimo, 11 caracteres"
     }),
-    cep: joi.string().min(8).messages({
+    cep: joi.string().min(8).max(8).messages({
         "string.base": "O campo cep precisa ser em formato texto",
         "string.empty": "O campo cep não pode ser vazio",
-        "string.max": "A cep precisa conter, no mínimo, 8 caracteres"
+        "string.max": "O cep precisa conter, no máximo, 8 caracteres",
+        "string.min": "O cep precisa conter, no mínimo, 8 caracteres"
     }),
     rua: joi.string().trim().messages({
         "string.base": "O campo rua precisa ser em formato texto",
