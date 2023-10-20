@@ -11,11 +11,11 @@ const cadastrarProduto = async (req, res) => {
       .first();
 
     if (!categoriaExiste) {
-      return res.status(404).json({ message: "Categoria não existe" });
+      return res.status(404).json({ mensagem: "Categoria não existe" });
     }
     const novoProduto = await knex("produtos")
       .insert({
-        descricao,
+        descricao: descricao.trim(),
         quantidade_estoque,
         valor,
         categoria_id,
@@ -34,7 +34,7 @@ const editarProduto = async (req, res) => {
   try {
     const produto = await knex("produtos").where({ id }).first();
     if (!produto) {
-      return res.status(404).json({ message: "Produto não encontrado" });
+      return res.status(404).json({ mensagem: "Produto não encontrado" });
     }
 
     const categoriaExiste = await knex("categorias")
@@ -44,7 +44,7 @@ const editarProduto = async (req, res) => {
       .first();
 
     if (!categoriaExiste) {
-      return res.status(404).json({ message: "Categoria não existe" });
+      return res.status(404).json({ mensagem: "Categoria não existe" });
     }
 
     const produtoAtualizado = await knex("produtos")
@@ -68,12 +68,12 @@ const listarProdutos = async (req, res) => {
 
   try {
     const produtos = await knex("produtos").where((query) => {
-      if (categoria_id && categoria_id.length > 1) {
+      if (categoria_id && typeof categoria_id !== "string") {
         categoria_id.forEach((item) => {
           query.orWhere({ categoria_id: item });
         });
       }
-      if (categoria_id && categoria_id.length === 1) {
+      if (categoria_id && typeof categoria_id === "string") {
         query.orWhere({ categoria_id: categoria_id });
       }
     });
@@ -89,7 +89,7 @@ const detalharProduto = async (req, res) => {
   try {
     const produto = await knex("produtos").where({ id }).first();
     if (!produto) {
-      return res.status(404).json({ message: "Produto não encontrado" });
+      return res.status(404).json({ mensagem: "Produto não encontrado" });
     }
     return res.status(200).json(produto);
   } catch (error) {
@@ -97,21 +97,20 @@ const detalharProduto = async (req, res) => {
   }
 };
 
-const excluirProduto = async (req, res) =>{
+const excluirProduto = async (req, res) => {
   const { id } = req.params;
   try {
     const produto = await knex("produtos").where({ id }).select().first();
     if (!produto) {
-      return res.status(404).json({ message: "Produto não encontrado" });
+      return res.status(404).json({ mensagem: "Produto não encontrado" });
     }
 
     await knex("produtos").where({ id }).delete();
-    return res.status(200).json({ "Produto excluído": produto});
-  }
-  catch (error) {
+    return res.status(200).json({ "Produto excluído": produto });
+  } catch (error) {
     return res.status(500).json({ mensagem: error.message });
   }
-}
+};
 
 module.exports = {
   cadastrarProduto,
