@@ -8,21 +8,30 @@ const {
   schemaLogin,
   schemaAtualizarUsuario,
 } = require("./validacoes/schemaUsuario");
-const { cadastrarCliente, listarCliente, detalharCliente, editarCliente } = require("./controladores/clientes");
+const {
+  cadastrarCliente,
+  listarCliente,
+  detalharCliente,
+  editarCliente,
+} = require("./controladores/clientes");
 const { schemaCadastrarCliente } = require("./validacoes/schemaCliente");
 const { schemaCadastrarProduto } = require("./validacoes/schemaProduto");
-const {cadastrarProduto,
+const {
+  cadastrarProduto,
   editarProduto,
   detalharProduto,
   listarProdutos,
-  excluirProduto
+  excluirProduto,
 } = require("./controladores/produto");
 
 const rotas = express();
 
 rotas.get("/categoria", categoria.listarCategoria);
 
-rotas.post("/usuario", validacoes(schemaCadastrarUsuario), usuario.cadastrarUsuario
+rotas.post(
+  "/usuario",
+  validacoes(schemaCadastrarUsuario),
+  usuario.cadastrarUsuario
 );
 
 rotas.post("/login", validacoes(schemaLogin), usuario.efetuarLogin);
@@ -32,12 +41,10 @@ rotas.use(validaToken);
 rotas.get("/usuario", usuario.obterPerfil);
 
 rotas.put(
-  "/usuario", validacoes(schemaAtualizarUsuario), usuario.atualizarPerfil
+  "/usuario",
+  validacoes(schemaAtualizarUsuario),
+  usuario.atualizarPerfil
 );
-
-rotas.post("/cliente", validacoes(schemaCadastrarCliente), cadastrarCliente);
-rotas.put("/cliente/:id", validacoes(schemaCadastrarCliente), editarCliente);
-
 
 rotas.post("/produto", validacoes(schemaCadastrarProduto), cadastrarProduto);
 rotas.put("/produto/:id", validacoes(schemaCadastrarProduto), editarProduto);
@@ -45,6 +52,8 @@ rotas.get("/produto", listarProdutos);
 rotas.get("/produto/:id", detalharProduto);
 rotas.delete("/produto/:id", excluirProduto);
 
+rotas.post("/cliente", validacoes(schemaCadastrarCliente), cadastrarCliente);
+rotas.put("/cliente/:id", validacoes(schemaCadastrarCliente), editarCliente);
 rotas.get("/cliente", listarCliente);
 rotas.get("/cliente/:id", detalharCliente);
 
