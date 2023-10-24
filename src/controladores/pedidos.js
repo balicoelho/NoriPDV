@@ -59,11 +59,11 @@ const cadastrarPedido = async (req, res) => {
             novoPedido[0].pedido_produtos.push(novaRelacao[0])
         }
         novoPedido[0].valor_total = valorTotal
-        const update = await knex("pedidos").update({
+        const update = await knex("pedidos").where({id:novoPedido[0].id}).update({
             valor_total: valorTotal
         })
 
-        return res.status(201).json({ novoPedido })
+        return res.status(201).json({ "Pedido criado": novoPedido })
     } catch (error) {
         return res.status(500).json({ mensagem: error.message });
     }
