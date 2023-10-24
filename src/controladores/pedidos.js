@@ -14,6 +14,8 @@ const cadastrarPedido = async (req, res) => {
             return res.status(404).json({ mensagem: "Cliente não esta cadastrado" });
         }
 
+        const produtos = [];
+
         for (produto of pedido_produtos) {
             const produtoExiste = await knex("produtos")
                 .where(
@@ -25,10 +27,15 @@ const cadastrarPedido = async (req, res) => {
             if (!produtoExiste) {
                 return res.status(404).json({ mensagem: "Produto não existe" });
             }
-            if (produtoExiste.quantidade_produto < quantidade_produto) {
+         
+            if (produtoExiste.quantidade_estoque < produto.quantidade_produto) {
                 return res.status(404).json({ mensagem: "Não existe quantidade suficiete em estoque " })
             }
+          
+            produtoExiste.quantidade_pedido = produto.quantidade_produto
+            produtos.push(produtoExiste)
         }
+
 
         const novoPedido = await knex("pedidos").insert({
             cliente_id,
@@ -37,22 +44,27 @@ const cadastrarPedido = async (req, res) => {
         }).returning("*")
 
         novoPedido[0].pedido_produtos = []
-        
-        for (item of pedido_produtos) {
-            const novaRelacao = await knex("pedido_produtos").insert({
-                produto_id: item.produto_id,
-                pedido_id: novoPedido[0].id,
-                quantidade_produto: pedido_produtos[0].quantidade_produto,
-                valor_produto: 1
-            }).returning("*")
 
+        let valorTotal = 0;
+
+        for (item of produtos) {
+      
+            const novaRelacao = await knex("pedido_produtos").insert({
+                produto_id: item.id,
+                pedido_id: novoPedido[0].id,
+                quantidade_produto: item.quantidade_pedido,
+                valor_produto: item.valor
+            }).returning("*")
+            valorTotal += item.quantidade_pedido * item.valor
             novoPedido[0].pedido_produtos.push(novaRelacao[0])
         }
+        novoPedido[0].valor_total = valorTotal
+        const update = await knex("pedidos").update({
+            valor_total: valorTotal
+        })
 
-
-        return res.status(201).json({novoPedido})
+        return res.status(201).json({ novoPedido })
     } catch (error) {
-        //console.log(error);
         return res.status(500).json({ mensagem: error.message });
     }
 }
