@@ -55,6 +55,6 @@ rotas.put("/cliente/:id", validacoes(schemaCadastrarCliente), editarCliente);
 rotas.get("/cliente", listarCliente);
 rotas.get("/cliente/:id", detalharCliente);
 
-rotas.post("pedido", validacoes(schemaCadastrarPedido), cadastrarPedido)
+rotas.post("/pedido", validacoes(schemaCadastrarPedido), cadastrarPedido)
 
 module.exports = rotas;
