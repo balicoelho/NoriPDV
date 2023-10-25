@@ -22,6 +22,10 @@ const schemaCadastrarProduto = joi.object({
     "number.base": "O campo categoria_id precisa ser um número",
     "number.integer": "O campo categoria_id precisa ser um número inteiro",
   }),
+  produto_imagem: joi.string().trim().messages({
+    "string.base": "O campo descricao precisa ser em formato texto",
+    "string.empty": "O campo descricao não pode ser vazio"
+  }),
 });
 module.exports = {
   schemaCadastrarProduto,
