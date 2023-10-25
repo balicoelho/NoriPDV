@@ -421,23 +421,17 @@ Se todas as condições forem atendidas e o Bearer Token for devidamente autenti
 
 ## ⚙️ Executando os testes
 
-Explicar como executar os testes automatizados para este sistema.
+No aplicativo Insomnia:
 
-### 🔩 Analise os testes de ponta a ponta
+1 - Faça a importação do DumpInsomnia para configurar todos os endpoint.
 
-Explique que eles verificam esses testes e porquê.
+2 - No canto superior direito do Insomnia, clique na configuração de "Base Environment", adicione {"local": "https://nutty-twill-toad.cyclic.app"}
 
-```
-Dar exemplos
-```
+3 - Configure o Bearer Token do Insomnia para inserir o token automaticamente nas rotas em que o mesmo é obrigatório:
 
-### ⌨️ E testes de estilo de codificação
+<div align='center'>
 
-Explique que eles verificam esses testes e porquê.
-
-```
-Dar exemplos
-```
+![1 (1)](https://github.com/balicoelho/NoriPDV/assets/138259133/6cc7f8b0-e9c1-4dcf-803c-9cbfa46f5b3c)
 
 <br><br>
 
