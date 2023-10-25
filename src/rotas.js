@@ -4,6 +4,7 @@ const usuario = require("./controladores/usuario");
 const validaToken = require("./intermediarios/validaToken");
 const validacoes = require("./intermediarios/validarCorpoReq");
 
+
 const {
   schemaCadastrarUsuario,
   schemaLogin,
