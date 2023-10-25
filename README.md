@@ -1,6 +1,6 @@
 # NORI PDV
 
-<img align="center" height="250" width="250" alt="NoriPdv" src="./assets/NoriPDV-Logo.png" />
+<img align="center" height="300" width="300" alt="NoriPdv" src="./assets/NoriPDV-Logo.png" />
 
 <br>
 Este projeto baseia-se na criação de uma API RESTful para um PDV (frente de caixa) . Com ela, os usuários podem se cadastrar, cadastrar clientes e produtos e criar pedidos.
@@ -127,6 +127,8 @@ baseURL: 'http://nutty-twill-toad.cyclic.app/'
 - [x] [Obter Produto](#get-produtoid)
 - [x] [Listar Produto](#get-produto)
 - [x] [Editar Produto](#put-produtoid)
+- [x] [Adicionar Imagem](#post-produtoimagemid)
+- [x] [Excluir Imagem](#delete-produtoimagemid)
 
 ### Clientes:
 
@@ -143,7 +145,7 @@ baseURL: 'http://nutty-twill-toad.cyclic.app/'
 
 ## 🔧 Endpoints
 
-#### `GET /categoria`:
+#### `GET /categoria`
 
 Lista as categorias disponíveis no banco de dados.
 
@@ -152,7 +154,7 @@ Não é necessário fornecer nenhuma informação adicional na requisição.
 Será retornado um objeto contendo a lista de todas as categorias cadastradas no Banco de Dados.
 <br><br>
 
-#### `POST /usuario`:
+#### `POST /usuario`
 
 Cadastra novo usuário no sistema, de acordo com os campos: nome, email e senha.
 
@@ -171,7 +173,7 @@ Todos os campos são obrigatórios.
 Se o cadastro do usuário for realizado com sucesso, será retornado um objeto contendo os dados do usuário cadastrado.
 <br><br>
 
-#### `POST /login`:
+#### `POST /login`
 
 Realiza login do usuário cadastrado.
 
@@ -189,7 +191,7 @@ Todos os campos são obrigatórios.
 Se o login for realizado com sucesso, será retornado um objeto contendo os dados do usuário cadastrado e o Bearer Token de validação que será obrigatório em todas as rotas seguintes dessa API.
 <br><br>
 
-#### `GET /usuario`:
+#### `GET /usuario`
 
 Permite que o usúario logado visualize seu próprio perfil.
 
@@ -198,7 +200,7 @@ Permite que o usúario logado visualize seu próprio perfil.
 Se o Bearer Token for devidamente autenticado, será retornado um objeto contendo os dados do usuário logado.
 <br><br>
 
-#### `PUT /usuario`:
+#### `PUT /usuario`
 
 Permite que o usúario atualize suas informações de cadastro.
 
@@ -219,7 +221,7 @@ Todos os campos são obrigatórios.
 Se o Bearer Token for devidamente autenticado, será retornado um objeto contendo os dados do usuário atualizado.
 <br><br>
 
-#### `POST /produto`:
+#### `POST /produto`
 
 Permite que o usúario cadastre um produto.
 
@@ -244,7 +246,7 @@ Se o Bearer Token for devidamente autenticado, será retornado um objeto contend
 
 <br><br>
 
-#### `PUT /produto/:id`:
+#### `PUT /produto/:id`
 
 Permite que o usúario atualize as informações de um produto.
 
@@ -270,7 +272,7 @@ O id da categoria deve ser um id válido de uma categoria cadastrada no banco de
 Se o Bearer Token for devidamente autenticado, será retornado um objeto contendo os dados do produto atualizado.
 <br><br>
 
-#### `GET /produto`:
+#### `GET /produto`
 
 Permite que o usúario liste todos os produtos cadastrados.
 
@@ -280,7 +282,7 @@ Se o Bearer Token for devidamente autenticado, será retornado um objeto contend
 
 <br><br>
 
-#### `GET /produto/:id`:
+#### `GET /produto/:id`
 
 Permite que o usúario detalhe informações de um produto.
 
@@ -291,7 +293,7 @@ Permite que o usúario detalhe informações de um produto.
 Se o Bearer Token for devidamente autenticado, será retornado um objeto contendo os dados do produto solicitado.
 <br><br>
 
-#### `DELETE /produto/:id`:
+#### `DELETE /produto/:id`
 
 Permite que o usúario exclua um produto.
 
@@ -302,7 +304,29 @@ Permite que o usúario exclua um produto.
 Se o Bearer Token for devidamente autenticado, será retornado um objeto contendo os dados do produto excluído.
 <br><br>
 
-#### `POST /cliente`:
+#### `POST /produto/imagem/:id`
+
+Permite que o usúario adicione uma foto ao cadastro do produto.
+
+É necessário fornecer como parametro da rota (req.params) o id do produto ao qual deseja adicionar a imagem.
+
+É necessário fornecer na requisição um multipart-form data com um arquivo rotulado "produto_imagem".
+
+É necessário informar na requisição o Bearer Token retornado na rota de login.
+
+Se o Bearer Token for devidamente autenticado, será retornado um objeto contendo os dados do produto cadastrado.
+
+#### `DELETE /produto/imagem/:id`
+
+Permite que o usúario exclua a foto do cadastro de um produto.
+
+É necessário fornecer como parâmetro da rota (req.params) o id do produto ao qual deseja excluir imagem.
+
+É necessário informar na requisição o Bearer Token retornado na rota de login.
+
+Se o Bearer Token for devidamente autenticado, será retornado um objeto contendo os dados do produto cadastrado.
+
+#### `POST /cliente`
 
 Permite que o usúario cadastre um cliente.
 
@@ -329,7 +353,7 @@ Os campos nome, email e cpf são obrigatórios. Os demais campos são opcionais.
 Se o Bearer Token for devidamente autenticado, será retornado um objeto contendo os dados do cliente cadastrado.
 <br><br>
 
-#### `PUT /cliente/:id`:
+#### `PUT /cliente/:id`
 
 Permite que o usúario atualize as informações de um cliente cadastrado.
 
@@ -358,7 +382,7 @@ Os campos nome, email e cpf são obrigatórios. Os demais campos são opcionais.
 Se o Bearer Token for devidamente autenticado, será retornado um objeto contendo os dados do cliente atualizado.
 <br><br>
 
-#### `GET /cliente`:
+#### `GET /cliente`
 
 Permite que o usúario liste todos os clientes cadastrados.
 
@@ -367,7 +391,7 @@ Permite que o usúario liste todos os clientes cadastrados.
 Se o Bearer Token for devidamente autenticado, será retornado um objeto contendo os dados de todos os clientes cadastrados no banco de dados.
 <br><br>
 
-#### `GET /cliente/:id`:
+#### `GET /cliente/:id`
 
 Permite que o usúario detalhe informações de um cliente.
 
@@ -378,7 +402,7 @@ Permite que o usúario detalhe informações de um cliente.
 Se o Bearer Token for devidamente autenticado, será retornado um objeto contendo os dados de todos os clientes cadastrados no banco de dados.
 <br><br>
 
-#### `POST /pedido`:
+#### `POST /pedido`
 
 Permite que o usúario cadastre um novo pedido.
 
