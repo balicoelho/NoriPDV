@@ -25,10 +25,10 @@ const cadastrarProduto = async (req, res) => {
       })
       .returning("*");
 
-    
+
     let urlImagem;
 
-    if(produto_imagem){
+    if (produto_imagem) {
       const arquivoSalvo = await s3.uploadArquivo(
         `imagens/produtos/${novoProduto[0].id}`,
         produto_imagem
@@ -37,8 +37,8 @@ const cadastrarProduto = async (req, res) => {
     }
 
     const updateProduto = await knex('produtos')
-      .where({id:novoProduto[0].id})
-      .update({produto_imagem: urlImagem}).returning("*");
+      .where({ id: novoProduto[0].id })
+      .update({ produto_imagem: urlImagem }).returning("*");
 
     return res.status(201).json({ "Produto criado": updateProduto[0] });
 
@@ -70,9 +70,9 @@ const editarProduto = async (req, res) => {
 
     let urlImagem;
 
-    if(produto_imagem){
-      
-      if(produto.produto_imagem){
+    if (produto_imagem) {
+
+      if (produto.produto_imagem) {
         await s3.excluirArquivo(produto.produto_imagem);
       }
       const arquivoSalvo = await s3.uploadArquivo(
@@ -88,7 +88,7 @@ const editarProduto = async (req, res) => {
         quantidade_estoque,
         valor,
         categoria_id,
-        produto_imagem:urlImagem
+        produto_imagem: urlImagem
       })
       .where({ id })
       .returning("*");
@@ -142,7 +142,12 @@ const excluirProduto = async (req, res) => {
       return res.status(404).json({ mensagem: "Produto não encontrado" });
     }
 
+    if (produto.produto_imagem) {
+      await s3.excluirArquivo(produto.produto_imagem);
+    }
+
     await knex("produtos").where({ id }).delete();
+
     return res.status(200).json({ "Produto excluído": produto });
   } catch (error) {
     return res.status(500).json({ mensagem: error.message });
