@@ -1,6 +1,4 @@
 const aws = require('aws-sdk');
-const {obterBufferDeUrl,
-    obterContentTypeDeUrl} = require('../utils/imagens')
 
 const endpoint = new aws.Endpoint(process.env.BUCKET_ENDPOINT);
 
@@ -12,26 +10,27 @@ const s3 = new aws.S3({
     }
 })
 
-const uploadArquivo = async (path, url)=>{
+const uploadArquivo = async (path, buffer, contentType)=>{
     
-    const contentType = await obterContentTypeDeUrl(url);
-
     if (!contentType.startsWith('image/')){
-        throw new Error("A url informada não possui uma imagem válida!");
+        throw new Error("O arquivo não é uma imagem válida!");
     }
 
     const parametros = {
         Bucket: process.env.BUCKET_NAME,
         Key: path,
-        Body: await obterBufferDeUrl(url),
+        Body: buffer,
         ContentType: contentType
     }
+    
     const arquivoSalvo = await s3.upload(parametros).promise();
-    return arquivoSalvo;
+
+    const url = `http://${process.env.BUCKET_NAME}.${process.env.BUCKET_ENDPOINT}${arquivoSalvo.Location}`;
+    
+    return url;
 }
 
 const excluirArquivo = async (url)=>{
-    console.log("excluirArquivo");
     
     const urlAnalisada = new URL(url);
     const path = decodeURIComponent(urlAnalisada.pathname.slice(1));

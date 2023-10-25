@@ -1,9 +1,7 @@
 const express = require("express");
-const categoria = require("./controladores/categoria");
-const usuario = require("./controladores/usuario");
 const validaToken = require("./intermediarios/validaToken");
 const validacoes = require("./intermediarios/validarCorpoReq");
-
+const multer = require('./intermediarios/multer');
 
 const {
   schemaCadastrarUsuario,
@@ -12,25 +10,16 @@ const {
 } = require("./validacoes/schemaUsuario");
 
 const { schemaCadastrarCliente } = require("./validacoes/schemaCliente");
+
 const { schemaCadastrarProduto } = require("./validacoes/schemaProduto");
+
 const { schemaCadastrarPedido } = require("./validacoes/schemaPedido");
 
-const {
-  cadastrarCliente,
-  listarCliente,
-  detalharCliente,
-  editarCliente,
-} = require("./controladores/clientes");
-
-const {
-  cadastrarProduto,
-  editarProduto,
-  detalharProduto,
-  listarProdutos,
-  excluirProduto,
-} = require("./controladores/produto");
-
-const { cadastrarPedido } = require("./controladores/pedidos")
+const categoria = require("./controladores/categoria");
+const usuario = require("./controladores/usuario");
+const cliente = require("./controladores/clientes");
+const produto = require("./controladores/produto");
+const pedido = require("./controladores/pedidos")
 
 const rotas = express();
 
@@ -45,17 +34,21 @@ rotas.use(validaToken);
 rotas.get("/usuario", usuario.obterPerfil);
 rotas.put("/usuario", validacoes(schemaAtualizarUsuario), usuario.atualizarPerfil);
 
-rotas.post("/produto", validacoes(schemaCadastrarProduto), cadastrarProduto);
-rotas.put("/produto/:id", validacoes(schemaCadastrarProduto), editarProduto);
-rotas.get("/produto", listarProdutos);
-rotas.get("/produto/:id", detalharProduto);
-rotas.delete("/produto/:id", excluirProduto);
+rotas.post("/produto", validacoes(schemaCadastrarProduto), produto.cadastrarProduto);
+rotas.put("/produto/:id", validacoes(schemaCadastrarProduto), produto.editarProduto);
+rotas.get("/produto", produto.listarProdutos);
+rotas.get("/produto/:id", produto.detalharProduto);
+rotas.delete("/produto/:id", produto.excluirProduto);
 
-rotas.post("/cliente", validacoes(schemaCadastrarCliente), cadastrarCliente);
-rotas.put("/cliente/:id", validacoes(schemaCadastrarCliente), editarCliente);
-rotas.get("/cliente", listarCliente);
-rotas.get("/cliente/:id", detalharCliente);
+rotas.post("/produto/imagem/:id", multer.single('produto_imagem'), produto.adicionarImagem);
+rotas.delete("/produto/imagem/:id", produto.excluirImagem);
 
-rotas.post("/pedido", validacoes(schemaCadastrarPedido), cadastrarPedido)
+rotas.post("/cliente", validacoes(schemaCadastrarCliente), cliente.cadastrarCliente);
+rotas.put("/cliente/:id", validacoes(schemaCadastrarCliente), cliente.editarCliente);
+rotas.get("/cliente", cliente.listarCliente);
+rotas.get("/cliente/:id", cliente.detalharCliente);
+
+rotas.post("/pedido", validacoes(schemaCadastrarPedido), pedido.cadastrarPedido);
+//rotas.get("/pedido", pedido.listarPedidos);
 
 module.exports = rotas;
