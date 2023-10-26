@@ -1,4 +1,6 @@
 const knex = require("../database");
+const nodemailer = require('nodemailer');
+const config = require('../servicos/nodemailer');
 
 const cadastrarPedido = async (req, res) => {
     const { cliente_id, observacao, pedido_produtos, produto_id, quantidade_produto } = req.body;
@@ -11,6 +13,8 @@ const cadastrarPedido = async (req, res) => {
         if (!clienteIdExiste) {
             return res.status(404).json({ mensagem: "Cliente não encontrado" });
         }
+
+        console.log(clienteIdExiste)
 
         const itensPedido = [];
 
@@ -63,6 +67,27 @@ const cadastrarPedido = async (req, res) => {
         await knex("pedidos").where({id:novoPedido[0].id}).update({
             valor_total: valorTotal
         })
+
+        const transporter = nodemailer.createTransport({
+            host: config.host,
+            port: config.port,
+            secure: false,
+            auth: {
+            user: config.user,
+            pass: config.pass,
+            },
+        });
+
+        const enviarEmail = async() => {
+            const email = await transporter.sendMail({
+                from: config.user, 
+                to: clienteIdExiste.email, 
+                subject: "Seu pedido foi cadastrado com suuuuuucesso!", 
+                html: "<b>O tempo de entrega leva de 2 a 3 dias úteis. :D</b>"
+            });
+        };
+
+        enviarEmail();
 
         return res.status(201).json({ "Pedido criado": novoPedido[0] })
     }
