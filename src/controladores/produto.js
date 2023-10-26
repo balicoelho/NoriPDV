@@ -1,4 +1,6 @@
+const { log } = require("console");
 const knex = require("../database");
+const s3 = require("../servicos/aws-sdk");
 
 const cadastrarProduto = async (req, res) => {
   const { descricao, quantidade_estoque, valor, categoria_id } = req.body;
@@ -13,6 +15,7 @@ const cadastrarProduto = async (req, res) => {
     if (!categoriaExiste) {
       return res.status(404).json({ mensagem: "Categoria não existe" });
     }
+
     const novoProduto = await knex("produtos")
       .insert({
         descricao: descricao.trim(),
@@ -23,16 +26,19 @@ const cadastrarProduto = async (req, res) => {
       .returning("*");
 
     return res.status(201).json({ "Produto criado": novoProduto[0] });
+
   } catch (error) {
     return res.status(500).json({ mensagem: error.message });
   }
 };
 
 const editarProduto = async (req, res) => {
-  const { descricao, quantidade_estoque, valor, categoria_id } = req.body;
+  const { descricao, quantidade_estoque, valor, categoria_id, produto_imagem } = req.body;
   const { id } = req.params;
   try {
+
     const produto = await knex("produtos").where({ id }).first();
+
     if (!produto) {
       return res.status(404).json({ mensagem: "Produto não encontrado" });
     }
@@ -52,16 +58,17 @@ const editarProduto = async (req, res) => {
         descricao,
         quantidade_estoque,
         valor,
-        categoria_id,
+        categoria_id
       })
       .where({ id })
       .returning("*");
 
     return res.status(201).json({ "Produto atualizado": produtoAtualizado[0] });
-  } catch (error) {
+  }
+  catch (error) {
     return res.status(500).json({ mensagem: error.message });
   }
-};
+}
 
 const listarProdutos = async (req, res) => {
   const { categoria_id } = req.query;
@@ -104,13 +111,88 @@ const excluirProduto = async (req, res) => {
     if (!produto) {
       return res.status(404).json({ mensagem: "Produto não encontrado" });
     }
+    
+    const produtoEstaNoPedido = await knex('pedido_produtos').where('produto_id', id).first();
+
+    if (produtoEstaNoPedido) {
+      return res.status(400).json({ mensagem: "O produto está associado a um pedido e não pode ser excluído." });
+    }
 
     await knex("produtos").where({ id }).delete();
+
+    if (produto.produto_imagem) {
+      await s3.excluirArquivo(produto.produto_imagem);
+    }
+
     return res.status(200).json({ "Produto excluído": produto });
   } catch (error) {
     return res.status(500).json({ mensagem: error.message });
   }
 };
+
+const adicionarImagem = async (req, res) => {
+  const {id} = req.params;
+  const {file} = req;
+
+  try {
+    if(!file){
+      return res.status(400).json({ mensagem: "Nenhuma imagem recebida" });
+    }
+    
+    const produto = await knex('produtos').where({id}).first();
+
+    if(!produto){
+      return res.status(404).json({ mensagem: "Produto não encontrado" });
+    }
+
+    if (produto.produto_imagem) {
+      await s3.excluirArquivo(produto.produto_imagem);
+    }
+
+    const arquivoSalvo = await s3.uploadArquivo(
+      `imagens/produtos/${produto.id}`,
+      file.buffer,
+      file.mimetype
+    );
+
+    const produtoAtualizado = await knex('produtos')
+      .where({ id: produto.id })
+      .update({ produto_imagem: arquivoSalvo }).returning("*");
+  
+    return res.status(200).json({ "Produto atualizado": produtoAtualizado[0] });
+
+  } catch (error) {
+    return res.status(500).json({ mensagem: error.message });
+  }
+
+}
+
+const excluirImagem = async (req, res) => {
+  const {id} = req.params;
+
+  try {
+    const produto = await knex('produtos').where({id}).first();
+  
+    if(!produto){
+      return res.status(404).json({ mensagem: "Produto não encontrado" });
+    }
+  
+    if (produto.produto_imagem) {
+      await s3.excluirArquivo(produto.produto_imagem);
+    }
+
+    const produtoAtualizado = await knex('produtos')
+      .where({ id: produto.id })
+      .update({ produto_imagem: null }).returning("*");
+  
+    return res.status(200).json({ "Produto atualizado": produtoAtualizado[0] });
+    
+  } catch (error) {
+    return res.status(500).json({ mensagem: error.message });
+  }
+
+}
+
 
 module.exports = {
   cadastrarProduto,
@@ -118,4 +200,6 @@ module.exports = {
   detalharProduto,
   listarProdutos,
   excluirProduto,
+  adicionarImagem,
+  excluirImagem
 };

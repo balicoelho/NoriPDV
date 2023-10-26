@@ -23,6 +23,7 @@ const schemaCadastrarProduto = joi.object({
     "number.integer": "O campo categoria_id precisa ser um número inteiro",
   }),
 });
+
 module.exports = {
   schemaCadastrarProduto,
 };
