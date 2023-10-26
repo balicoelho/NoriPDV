@@ -118,5 +118,6 @@ return res.status(200).json(pedidos);
     return res.status(500).json({ mensagem: error.message });
   }
 };
-module.exports = { cadastrarPedido,
+module.exports = { 
+cadastrarPedido,
 listarPedidos };
