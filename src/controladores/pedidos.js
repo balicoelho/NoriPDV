@@ -1,58 +1,97 @@
 const knex = require("../database");
+const nodemailer = require('nodemailer');
+const config = require('../servicos/nodemailer');
 
 const cadastrarPedido = async (req, res) => {
     const { cliente_id, observacao, pedido_produtos, produto_id, quantidade_produto } = req.body;
 
     try {
         const clienteIdExiste = await knex("clientes")
-            .where({
-                id: cliente_id
-            })
+            .where({id: cliente_id})
             .first();
 
         if (!clienteIdExiste) {
-            return res.status(404).json({ mensagem: "Cliente não esta cadastrado" });
+            return res.status(404).json({ mensagem: "Cliente não encontrado" });
         }
 
-        for (produto of pedido_produtos) {
-            const produtoExiste = await knex("produtos")
-                .where(
-                    { id: produto.produto_id }
+        console.log(clienteIdExiste)
 
-                )
-                .first()
+        const itensPedido = [];
 
-            if (!produtoExiste) {
-                return res.status(404).json({ mensagem: "Produto não existe" });
+        for (itemPedido of pedido_produtos) {
+
+            const produto = await knex("produtos")
+                .where({id: itemPedido.produto_id})
+                .first();
+
+            if (!produto) {
+                return res.status(404).json({ mensagem: `Produto ${itemPedido.produto_id} não encontrado`});
             }
-            if (produtoExiste.quantidade_produto < quantidade_produto) {
-                return res.status(404).json({ mensagem: "Não existe quantidade suficiete em estoque " })
+         
+            if (produto.quantidade_estoque < itemPedido.quantidade_produto) {
+                return res.status(404).json({ mensagem: `Não existe quantidade suficiente do produto ${produto.id} em estoque` });
             }
+          
+            produto.quantidade_pedido = itemPedido.quantidade_produto;
+            itensPedido.push(produto);
+
+            await knex('produtos').where('id', itemPedido.produto_id).update({quantidade_estoque: produto.quantidade_estoque - produto.quantidade_pedido})
+        
         }
 
         const novoPedido = await knex("pedidos").insert({
             cliente_id,
-            observacao: observacao.trim(),
-            valor_total: 1
-        }).returning("*")
+            observacao,
+            valor_total: 0
+        }).returning("*");
 
-        novoPedido[0].pedido_produtos = []
-        
-        for (item of pedido_produtos) {
-            const novaRelacao = await knex("pedido_produtos").insert({
-                produto_id: item.produto_id,
+        novoPedido[0].pedido_produtos = [];
+
+        let valorTotal = 0;
+
+        for (item of itensPedido) {
+      
+            const relacionamento = await knex("pedido_produtos").insert({
+                produto_id: item.id,
                 pedido_id: novoPedido[0].id,
-                quantidade_produto: pedido_produtos[0].quantidade_produto,
-                valor_produto: 1
-            }).returning("*")
+                quantidade_produto: item.quantidade_pedido,
+                valor_produto: item.valor
+            }).returning("*");
 
-            novoPedido[0].pedido_produtos.push(novaRelacao[0])
+            valorTotal += item.quantidade_pedido * item.valor;
+            novoPedido[0].pedido_produtos.push(relacionamento[0]);
         }
 
+        novoPedido[0].valor_total = valorTotal;
 
-        return res.status(201).json({novoPedido})
-    } catch (error) {
-        //console.log(error);
+        await knex("pedidos").where({id:novoPedido[0].id}).update({
+            valor_total: valorTotal
+        })
+
+        const transporter = nodemailer.createTransport({
+            host: config.host,
+            port: config.port,
+            secure: false,
+            auth: {
+            user: config.user,
+            pass: config.pass,
+            },
+        });
+
+        const enviarEmail = async() => {
+            const email = await transporter.sendMail({
+                from: config.user, 
+                to: clienteIdExiste.email, 
+                subject: "Seu pedido foi cadastrado com suuuuuucesso!", 
+                html: "<b>O tempo de entrega leva de 2 a 3 dias úteis. :D</b>"
+            });
+        };
+
+        enviarEmail();
+
+        return res.status(201).json({ "Pedido criado": novoPedido[0] })
+    }
+    catch (error) {
         return res.status(500).json({ mensagem: error.message });
     }
 }

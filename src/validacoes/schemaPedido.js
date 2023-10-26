@@ -20,10 +20,11 @@ const schemaCadastrarPedido = joi.object({
       "number.empty": "O campo produto_id não pode ser vazio",
     }),
 
-    quantidade_produto: joi.number().required().messages({
+    quantidade_produto: joi.number().min(1).required().messages({
       "number.base": "O campo quantidade_produto precisa ser em formato numérico",
       "any.required": "O campo quantidade_produto é obrigatório (coloque-o dentro do array!)",
       "number.empty": "O campo quantidade_produto não pode ser vazio",
+      "number.min": "O campo quantidade_estoque precisa ser um número positivo"
     }),
   })).required().min(1).messages({
     "any.required": "O campo pedido_produtos é obrigatório",
