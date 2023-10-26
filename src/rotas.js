@@ -21,6 +21,7 @@ const cliente = require("./controladores/clientes");
 const produto = require("./controladores/produto");
 const pedido = require("./controladores/pedidos")
 
+
 const rotas = express();
 
 rotas.get("/categoria", categoria.listarCategoria);
@@ -47,8 +48,8 @@ rotas.post("/cliente", validacoes(schemaCadastrarCliente), cliente.cadastrarClie
 rotas.put("/cliente/:id", validacoes(schemaCadastrarCliente), cliente.editarCliente);
 rotas.get("/cliente", cliente.listarCliente);
 rotas.get("/cliente/:id", cliente.detalharCliente);
-
 rotas.post("/pedido", validacoes(schemaCadastrarPedido), pedido.cadastrarPedido);
-//rotas.get("/pedido", pedido.listarPedidos);
+rotas.get("/pedido", pedido.listarPedidos);
+
 
 module.exports = rotas;
