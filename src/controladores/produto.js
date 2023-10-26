@@ -126,9 +126,15 @@ const excluirProduto = async (req, res) => {
     if (!produto) {
       return res.status(404).json({ mensagem: "Produto não encontrado" });
     }
-
+    console.log(produto)
     if (produto.produto_imagem) {
       await s3.excluirArquivo(produto.produto_imagem);
+    }
+
+    const produtoEstaNoPedido = await knex('pedido_produtos').where('produto_id', id).first();
+
+    if (produtoEstaNoPedido) {
+      return res.status(400).json({ mensagem: "O produto está associado a um pedido e não pode ser excluído." });
     }
 
     await knex("produtos").where({ id }).delete();
