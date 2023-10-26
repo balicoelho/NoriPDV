@@ -30,12 +30,14 @@ const cadastrarPedido = async (req, res) => {
           
             produto.quantidade_pedido = itemPedido.quantidade_produto;
             itensPedido.push(produto);
-        }
 
+            await knex('produtos').where('id', itemPedido.produto_id).update({quantidade_estoque: produto.quantidade_estoque - produto.quantidade_pedido})
+        
+        }
 
         const novoPedido = await knex("pedidos").insert({
             cliente_id,
-            observacao: observacao.trim(),
+            observacao,
             valor_total: 0
         }).returning("*");
 
