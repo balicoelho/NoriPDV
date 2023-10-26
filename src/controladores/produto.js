@@ -53,27 +53,12 @@ const editarProduto = async (req, res) => {
       return res.status(404).json({ mensagem: "Categoria não existe" });
     }
 
-    let urlImagem;
-
-    if (produto_imagem) {
-
-      if (produto.produto_imagem) {
-        await s3.excluirArquivo(produto.produto_imagem);
-      }
-      const arquivoSalvo = await s3.uploadArquivo(
-        `imagens/produtos/${produto.id}`,
-        produto_imagem
-      )
-      urlImagem = arquivoSalvo.Location;
-    }
-
     const produtoAtualizado = await knex("produtos")
       .update({
         descricao,
         quantidade_estoque,
         valor,
-        categoria_id,
-        produto_imagem: urlImagem
+        categoria_id
       })
       .where({ id })
       .returning("*");
@@ -83,7 +68,7 @@ const editarProduto = async (req, res) => {
   catch (error) {
     return res.status(500).json({ mensagem: error.message });
   }
-};
+}
 
 const listarProdutos = async (req, res) => {
   const { categoria_id } = req.query;
@@ -126,11 +111,7 @@ const excluirProduto = async (req, res) => {
     if (!produto) {
       return res.status(404).json({ mensagem: "Produto não encontrado" });
     }
-    console.log(produto)
-    if (produto.produto_imagem) {
-      await s3.excluirArquivo(produto.produto_imagem);
-    }
-
+    
     const produtoEstaNoPedido = await knex('pedido_produtos').where('produto_id', id).first();
 
     if (produtoEstaNoPedido) {
@@ -138,6 +119,10 @@ const excluirProduto = async (req, res) => {
     }
 
     await knex("produtos").where({ id }).delete();
+
+    if (produto.produto_imagem) {
+      await s3.excluirArquivo(produto.produto_imagem);
+    }
 
     return res.status(200).json({ "Produto excluído": produto });
   } catch (error) {
@@ -177,8 +162,7 @@ const adicionarImagem = async (req, res) => {
     return res.status(200).json({ "Produto atualizado": produtoAtualizado[0] });
 
   } catch (error) {
-    console.log(error);
-      return res.status(500).json({ mensagem: error.message });
+    return res.status(500).json({ mensagem: error.message });
   }
 
 }

@@ -24,10 +24,8 @@ const uploadArquivo = async (path, buffer, contentType)=>{
     }
     
     const arquivoSalvo = await s3.upload(parametros).promise();
-
-    const url = `http://${process.env.BUCKET_NAME}.${process.env.BUCKET_ENDPOINT}${arquivoSalvo.Location}`;
-    
-    return url;
+    //const url = `http://${process.env.BUCKET_NAME}.${process.env.BUCKET_ENDPOINT}${arquivoSalvo.Location}`;
+    return arquivoSalvo.Location;
 }
 
 const excluirArquivo = async (url)=>{
