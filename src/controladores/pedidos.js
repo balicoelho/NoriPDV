@@ -57,4 +57,66 @@ const cadastrarPedido = async (req, res) => {
     }
 }
 
-module.exports = { cadastrarPedido };
+const listarPedidos = async (req, res) => {
+  const { cliente_id } = req.query;
+
+  try {
+    if (cliente_id) {
+      const clienteExiste = await knex("clientes").where({ id: cliente_id }).first();
+     
+      if (!clienteExiste) {
+        return res.status(404).json({ mensagem: "Cliente não está cadastrado" });
+      }
+    }
+
+    let query = knex("pedidos");
+    
+      if (cliente_id) {
+      query
+        .join("pedido_produtos", "pedidos.id", "pedido_produtos.pedido_id")
+        .where((query) => {
+          if (Array.isArray(cliente_id)) {
+            query.whereIn("pedidos.cliente_id", cliente_id);
+          } else {
+            query.where("pedidos.cliente_id", cliente_id);
+          }
+        }).select("pedidos.*", "pedido_produtos.*")        
+    }         
+const pedidos = await query;
+
+if (pedidos.length === 0) {
+  return res.status(404).json({ mensagem: "Nenhum pedido encontrado" });
+} 
+
+if (cliente_id) {
+  const respostaFormatada = {        
+    pedidos: pedidos.map((pedido) => ({
+      pedido: {
+        id: pedido.pedido_id,
+        valor_total: pedido.valor_total,
+        observacao: pedido.observacao,
+        cliente_id: pedido.cliente_id
+      },
+      pedido_produtos: [
+        {
+          id: pedido.id,
+          quantidade_produto: pedido.quantidade_produto,
+          valor_produto: pedido.valor_produto,
+          pedido_id: pedido.pedido_id,
+          produto_id: pedido.produto_id
+        }
+       ]
+    }))
+  };
+
+  return res.status(200).json(respostaFormatada);
+} 
+
+return res.status(200).json(pedidos);
+   } 
+  catch (error) {    
+    return res.status(500).json({ mensagem: error.message });
+  }
+};
+module.exports = { cadastrarPedido,
+listarPedidos };

@@ -29,7 +29,7 @@ const {
   excluirProduto,
 } = require("./controladores/produto");
 
-const { cadastrarPedido } = require("./controladores/pedidos")
+const { cadastrarPedido, listarPedidos } = require("./controladores/pedidos")
 
 const rotas = express();
 
@@ -56,5 +56,6 @@ rotas.get("/cliente", listarCliente);
 rotas.get("/cliente/:id", detalharCliente);
 
 rotas.post("/pedido", validacoes(schemaCadastrarPedido), cadastrarPedido)
+rotas.get("/pedido", listarPedidos)
 
 module.exports = rotas;
