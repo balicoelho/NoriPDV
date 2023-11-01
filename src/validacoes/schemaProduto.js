@@ -17,8 +17,8 @@ const schemaCadastrarProduto = joi.object({
     "number.base": "O campo valor precisa ser um número inteiro",
     "number.positive": "O campo valor precisa ser um número positivo",
   }),
-  categorias_id: joi.number().integer().required().messages({
-    "any.required": "O campo categorias_id é obrigatório",
+  categoria_id: joi.number().integer().required().messages({
+    "any.required": "O campo categoria_id é obrigatório",
     "number.base": "O campo quantidade_estoque precisa ser um número inteiro",
   }),
 });

@@ -1,4 +1,5 @@
 # NoriPDV
+
 [nutty-twill-toad.cyclic.app](https://nutty-twill-toad.cyclic.app/)
 
 Este projeto baseia-se na criação de uma API RESTful para um PDV (frente de caixa) . Com ela, os usuários podem se cadastrar, fazer login, editar e obter informações sobre seu perfil e listar categorias disponíveis no banco de dados.
