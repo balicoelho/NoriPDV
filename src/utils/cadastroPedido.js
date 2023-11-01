@@ -19,13 +19,13 @@ const clienteExiste = async (req, res, next) => {
 const produtosExistem = async (req, res, next) => {
   const { pedido_produtos } = req.body;
   try {
-    const produtos = await knex("produtos");
-
     for (const pedido of pedido_produtos) {
-      let produtoNaoExiste = produtos.find(
-        (produto) => produto.id === pedido.produto_id
-      );
-      if (produtoNaoExiste === undefined) {
+      const produto = await knex("produtos")
+        .where({
+          id: pedido.produto_id,
+        })
+        .first();
+      if (!produto) {
         return res
           .status(404)
           .json({ message: `Produto ${pedido.produto_id} não encontrado` });
@@ -59,13 +59,13 @@ const produtosDuplicados = async (req, res, next) => {
 const estoqueDisponivel = async (req, res, next) => {
   const { pedido_produtos } = req.body;
   try {
-    const produtos = await knex("produtos");
-
     for (const pedido of pedido_produtos) {
-      let quantidadeEstoque = produtos.find(
-        (produto) => produto.id === pedido.produto_id
-      ).quantidade_estoque;
-      if (quantidadeEstoque < pedido.quantidade_produto) {
+      const estoque = await knex("produtos")
+        .where({
+          id: pedido.produto_id,
+        })
+        .select("quantidade_estoque");
+      if (estoque < pedido.quantidade_produto) {
         return res.status(404).json({
           message: `Produto ${pedido.produto_id} sem estoque disponível. Apenas ${quantidadeEstoque} disponível`,
         });
